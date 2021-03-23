@@ -66,10 +66,29 @@ void descKeypoints(vector<cv::KeyPoint> &keypoints, cv::Mat &img, cv::Mat &descr
 
         extractor = cv::BRISK::create(threshold, octaves, patternScale);
     }
-    else
+    else if (descriptorType.compare("BRIEF") == 0)
     {
 
-        //...
+    }
+    else if (descriptorType.compare("ORB") == 0)
+    {
+
+    }
+    else if (descriptorType.compare("FREAK") == 0)
+    {
+
+    }
+    else if (descriptorType.compare("AKAZE") == 0)
+    {
+
+    }
+    else if (descriptorType.compare("SIFT") == 0)
+    {
+
+    }
+    else // Throw Error
+    {
+        
     }
 
     // perform feature description
