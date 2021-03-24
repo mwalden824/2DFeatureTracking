@@ -127,7 +127,17 @@ int main(int argc, const char *argv[])
         cv::Rect vehicleRect(535, 180, 180, 150);
         if (bFocusOnVehicle)
         {
-            // ...
+            // For every keypoint
+            for (auto it = keypoints.begin(); it != keypoints.end(); ++it)
+            {
+                // If keypoint is outside of vehicleRect (is NOT bound by)
+                if (    (vehicleRect.x >= (*it).pt.x) || ((vehicleRect.x + vehicleRect.width) <= (*it).pt.x)   ||
+                        (vehicleRect.y >= (*it).pt.y) || ((vehicleRect.y + vehicleRect.height) <= (*it).pt.y)    )
+                {
+                    // Delete keypoint
+                    keypoints.erase(it);
+                }
+            }
         }
 
         //// EOF STUDENT ASSIGNMENT
