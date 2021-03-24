@@ -87,7 +87,7 @@ int main(int argc, const char *argv[])
         }
 
         //// EOF STUDENT ASSIGNMENT
-        cout << "#1 : LOAD IMAGE INTO BUFFER done" << endl;
+        // cout << "#1 : LOAD IMAGE INTO BUFFER done" << endl;
 
         /* DETECT IMAGE KEYPOINTS */
 
@@ -124,18 +124,21 @@ int main(int argc, const char *argv[])
 
         // only keep keypoints on the preceding vehicle
         bool bFocusOnVehicle = true;
+        // bool bFocusOnVehicle = false;
         cv::Rect vehicleRect(535, 180, 180, 150);
         if (bFocusOnVehicle)
         {
-            // For every keypoint
-            for (auto it = keypoints.begin(); it != keypoints.end(); ++it)
+            std::vector<cv::KeyPoint>::iterator it = keypoints.begin();
+            while (it != keypoints.end())
             {
-                // If keypoint is outside of vehicleRect (is NOT bound by)
-                if (    (vehicleRect.x >= (*it).pt.x) || ((vehicleRect.x + vehicleRect.width) <= (*it).pt.x)   ||
-                        (vehicleRect.y >= (*it).pt.y) || ((vehicleRect.y + vehicleRect.height) <= (*it).pt.y)    )
+                if (    (vehicleRect.x > (*it).pt.x) || ((vehicleRect.x + vehicleRect.width) < (*it).pt.x)   ||
+                        (vehicleRect.y > (*it).pt.y) || ((vehicleRect.y + vehicleRect.height) < (*it).pt.y)    )
                 {
-                    // Delete keypoint
-                    keypoints.erase(it);
+                    it = keypoints.erase(it);
+                }
+                else
+                {
+                    ++it;
                 }
             }
         }
@@ -143,8 +146,8 @@ int main(int argc, const char *argv[])
         //// EOF STUDENT ASSIGNMENT
 
         // optional : limit number of keypoints (helpful for debugging and learning)
-        // bool bLimitKpts = false;
-        bool bLimitKpts = true;
+        bool bLimitKpts = false;
+        // bool bLimitKpts = true;
         if (bLimitKpts)
         {
             int maxKeypoints = 50;
@@ -159,7 +162,7 @@ int main(int argc, const char *argv[])
 
         // push keypoints and descriptor for current frame to end of data buffer
         (dataBuffer.end() - 1)->keypoints = keypoints;
-        cout << "#2 : DETECT KEYPOINTS done" << endl;
+        // cout << "#2 : DETECT KEYPOINTS done" << endl;
 
         /* EXTRACT KEYPOINT DESCRIPTORS */
 
@@ -180,7 +183,7 @@ int main(int argc, const char *argv[])
         // push descriptors for current frame to end of data buffer
         (dataBuffer.end() - 1)->descriptors = descriptors;
 
-        cout << "#3 : EXTRACT DESCRIPTORS done" << endl;
+        // cout << "#3 : EXTRACT DESCRIPTORS done" << endl;
 
         if (dataBuffer.size() > 1) // wait until at least two images have been processed
         {
@@ -208,7 +211,7 @@ int main(int argc, const char *argv[])
             // store matches in current data frame
             (dataBuffer.end() - 1)->kptMatches = matches;
 
-            cout << "#4 : MATCH KEYPOINT DESCRIPTORS done" << endl;
+            // cout << "#4 : MATCH KEYPOINT DESCRIPTORS done" << endl;
 
             // visualize matches between current and previous image
             bVis = true;
