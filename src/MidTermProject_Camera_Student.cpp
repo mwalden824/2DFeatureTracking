@@ -41,6 +41,8 @@ int main(int argc, const char *argv[])
     bool bVis = false;            // visualize results
 
     /* MAIN LOOP OVER ALL IMAGES */
+    double pTime = 0.0;
+    double pTimeDesc = 0.0;
 
     for (size_t imgIndex = 0; imgIndex <= imgEndIndex - imgStartIndex; imgIndex++)
     {
@@ -93,31 +95,37 @@ int main(int argc, const char *argv[])
 
         // extract 2D keypoints from current image
         vector<cv::KeyPoint> keypoints; // create empty feature list for current image
-        string detectorType = "SHITOMASI";
+        // string detectorType = "SHITOMASI";
         // string detectorType = "HARRIS";
         // string detectorType = "FAST";
         // string detectorType = "BRISK";
         // string detectorType = "ORB";
         // string detectorType = "AKAZE";
-        // string detectorType = "SIFT";
+        string detectorType = "SIFT";
         
         //// STUDENT ASSIGNMENT
         //// TASK MP.2 -> add the following keypoint detectors in file matching2D.cpp and enable string-based selection based on detectorType
         //// -> HARRIS, FAST, BRISK, ORB, AKAZE, SIFT
 
+        double tempTime;
         if (detectorType.compare("SHITOMASI") == 0)
         {
-            detKeypointsShiTomasi(keypoints, imgGray, false);
+            detKeypointsShiTomasi(keypoints, imgGray, false, tempTime);
+            pTime += tempTime;
         }
         else if (detectorType.compare("HARRIS") == 0)
         {
-            detKeypointsHarris(keypoints, imgGray, false);
+            detKeypointsHarris(keypoints, imgGray, false, tempTime);
+            pTime += tempTime;
         }
         else    // Modern Detector Type
         {
-            detKeypointsModern(keypoints, imgGray, detectorType, false);
+            detKeypointsModern(keypoints, imgGray, detectorType, false, tempTime);
+            pTime += tempTime;
         }
         //// EOF STUDENT ASSIGNMENT
+
+        cout << "Detected Keypoints in " << pTime << " ms." << endl;
 
         //// STUDENT ASSIGNMENT
         //// TASK MP.3 -> only keep keypoints on the preceding vehicle
@@ -167,17 +175,19 @@ int main(int argc, const char *argv[])
         /* EXTRACT KEYPOINT DESCRIPTORS */
 
         //// STUDENT ASSIGNMENT
-        //// TASK MP.4 -> add the following descriptors in file matching2D.cpp and enable string-based selection based on descriptorType
+        // TASK MP.4 -> add the following descriptors in file matching2D.cpp and enable string-based selection based on descriptorType
         //// -> BRIEF, ORB, FREAK, AKAZE, SIFT
 
         cv::Mat descriptors;
-        string descriptorType = "BRISK"; // BRIEF, ORB, FREAK, AKAZE, SIFT
+        // string descriptorType = "BRISK"; // BRIEF, ORB, FREAK, AKAZE, SIFT
         // string descriptorType = "BRIEF";
         // string descriptorType = "ORB";
-        // string descriptorType = "FREAK";
+        string descriptorType = "FREAK";
         // string descriptorType = "AKAZE";
         // string descriptorType = "SIFT";
-        descKeypoints((dataBuffer.end() - 1)->keypoints, (dataBuffer.end() - 1)->cameraImg, descriptors, descriptorType);
+        descKeypoints((dataBuffer.end() - 1)->keypoints, (dataBuffer.end() - 1)->cameraImg, descriptors, descriptorType, tempTime);
+        pTimeDesc += tempTime;
+        cout << "Described Keypoints in " << pTimeDesc << " ms." << endl;
         //// EOF STUDENT ASSIGNMENT
 
         // push descriptors for current frame to end of data buffer
@@ -214,7 +224,8 @@ int main(int argc, const char *argv[])
             // cout << "#4 : MATCH KEYPOINT DESCRIPTORS done" << endl;
 
             // visualize matches between current and previous image
-            bVis = true;
+            // bVis = true;
+            bVis = false;
             if (bVis)
             {
                 cv::Mat matchImg = ((dataBuffer.end() - 1)->cameraImg).clone();
